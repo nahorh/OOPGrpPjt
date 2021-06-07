@@ -1,0 +1,632 @@
+#include<iostream>
+#include<conio.h>//console IO operation
+#include<windows.h>//for console operation
+#include<iomanip>//for formatting of tables
+#include<fstream>//for file handling
+#include<stdlib.h>
+#include<time.h>//for random number generation
+using namespace std;
+class Bus{
+private:
+  int seats,freeseats,ch;
+  int t_seats,t_freeseats;
+  string number,name,driverName,dp,ds;
+  string t_number,t_name,t_driverName,t_dp,t_ds;
+  string c_name,c_seat,c_id,c_contact;
+  string tm_name,t_seat,t_id,t_contact;
+  fstream file,file1,file2;
+public:
+void Start(){
+  system("cls");
+  string email,pass;
+cout<<"1.Administrator Login\n2.Customer"<<endl;
+cin>>ch;
+switch(ch){
+  case 1:
+  relogin:
+  system("cls");
+  cout<<"***Enter email***"<<endl;
+  while((getchar())!='\n');//flushing I/P stream
+getline(cin,email);
+cout<<"***Enter Password***"<<endl;
+// while((getchar())!='\n');//flushing I/P stream
+getline(cin,pass);
+if(email=="r"&&pass=="r"){
+  cout<<"****Access granted";
+  for(int i=0;i<10;i++){
+    Sleep(15);//produce delay of 1000ms
+    cout<<"*";
+  }
+  Menu();
+}
+else {cout<<"***Invalid Credentials***";
+goto relogin;
+}
+  break;
+  case 2:CustomerChoice();
+  break;
+  case 3:
+  break;
+  default:cout<<"Invalid choice..."<<endl;
+}
+}
+void Menu(){
+  int ch;
+  Menu:
+system("cls");
+cout<<"***Bus Reservation System***"<<endl;
+cout<<"Menu"<<endl;
+cout<<"1.Add Bus"<<endl<<
+"2.View Bus"<<endl<<
+"3.Edit Bus"<<endl<<
+"4.Delete Bus"<<endl<<
+"5.Customer Info"<<endl<<
+"6.Logout"<<endl<<
+"7.Exit And Close"<<endl;
+cin>>ch;
+switch(ch){
+  case 1:NewBus();
+  break;
+  case 2:ViewBus();
+  break;
+  case 3:EditBus();
+  break;
+  case 4:DeleteBus();
+  break;
+  case 5:CustomerInfo();
+  break;
+  case 6:Start();
+  break;
+  case 7:system("cls");
+          exit(0);
+  break;
+  default:cout<<"Invalid Choice"<<endl;
+  Sleep(4000);//Wait for 4 seconds
+  goto Menu;
+}
+}
+void NewBus(){
+  newbus:
+  system("cls");
+  // fstream file;
+  int match=0;
+  // string t_name,t_seats,t_number,t_driverName,t_freeseats;
+  cout<<"***Bus Reservation System***"<<endl;
+  Sleep(1000);
+  cout<<"Enter Bus Number"<<endl;
+  cin>>number;
+  cout<<"Enter Bus Name"<<endl;
+  cin>>name;
+  cout<<"Enter Driver Name"<<endl;
+  cin>>driverName;
+  cout<<"Enter number of seats"<<endl;
+  cin>>seats;
+  freeseats=seats;
+  cout<<"Enter departure place"<<endl;
+  cin>>dp;
+  cout<<"Enter destination place"<<endl;
+  cin>>ds;
+  // file.open("bus.txt",ios::in);
+   file.open("bus.txt",ios::in);
+  //  file.write("abcdef");
+  // std::ifstream file("bus.txt");
+  if(!file){//file doesn't exist
+  cout<<"File doesn't exist"<<endl;
+  // file.open("bus.txt",ios::app|ios::out|ios::in);
+  file.close();
+  file.open("bus.txt",ios::out|ios::app);
+  file<<number<<" "<<name<<" "<<seats<<" "<<driverName<<
+  " "<<freeseats<<" "<<dp<<" "<<ds<<endl;
+  file.close();
+  }
+  else{
+    // file.open("bus.txt",ios::app|ios::in|ios::out);
+    file.close();
+    file.open("bus.txt",ios::in);
+    // std::ifstream file("bus.txt");
+    // file>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats;
+    while(!file.eof()){
+      file>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats>>t_dp>>t_ds;
+      if(number==t_number){
+        match++;
+        break;
+      }
+      // cout<<"H"<<endl;
+      file>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats>>t_dp>>t_ds;
+    }
+    file.close();
+      if(match==0){
+    // file.open("bus.txt");
+    file.open("bus.txt",ios::out|ios::app);
+    // std::ofstream file("bus.txt",ios::app);
+    file<<endl<<number<<" "<<name<<" "<<seats<<" "<<driverName<<
+    " "<<freeseats<<" "<<dp<<" "<<ds;
+    file.close();
+  }
+  else {
+    cout<<"Duplicate Bus Found";
+    getch();
+    // file.close();
+    Menu();
+  }
+  }
+  cout<<"New Bus Created Successfully"<<endl;
+  getch();
+  Menu();
+}
+void ViewBus(){
+  viewBus:
+  system("cls");
+  int ch;
+cout<<"***Bus Reservation System***"<<endl;
+cout<<"1.Single Bus"<<endl<<
+"2.All Buses"<<endl<<
+"3.Go Back"<<endl;
+cin>>ch;
+switch(ch){
+  case 1:SingleBusView();
+  break;
+  case 2:AllBusView();
+  break;
+  case 3:Menu();
+  break;
+  default:cout<<"Invalid Choice"<<endl;
+  Sleep(3000);
+  goto viewBus;
+}
+}
+void SingleBusView(){
+system("cls");
+int match=0;
+// string t_name,t_seats,t_number,t_driverName,t_freeseats,tmp_number;
+// fstream file;
+cout<<"***Bus Reservation System***"<<endl;
+file.open("bus.txt");
+if(!file){//if file doesn't exists
+  cout<<"No Record Exists"<<endl;
+  file.close();
+}
+else{
+//  file.open("bus.txt",ios::in);
+std::ifstream file("bus.txt");
+cout<<"Enter Bus Number To View"<<endl;
+cin>>number;
+// file>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats;
+cout<<left<<setw(20)<<"Bus Name"<<setw(20)<<"Bus Number"<<setw(20)<<"Driver Name"<<setw(20)<<
+"No Of Seats"<<setw(20)<<"FreeSeats"<<setw(20)<<"Departure Place"<<
+setw(20)<<"Destination"<<endl;
+while(!file.eof()){
+  file>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats>>t_dp>>t_ds;
+  if(!file.eof()){
+      if(number==t_number){
+    cout<<left<<setw(20)<<t_name<<setw(20)<<t_number<<setw(20)<<t_driverName<<setw(20)<<
+    t_seats<<setw(20)<<t_freeseats<<setw(20)<<t_dp<<setw(20)<<t_ds<<endl;
+    match=1;
+    file.close();
+    break;
+  }
+  }
+  else{  }
+}
+file.close();
+if(match==0){
+  cout<<"No Record Found"<<endl;
+}
+}
+// Sleep(5000);
+file.close();
+getch();
+Menu();
+}
+void AllBusView(){
+
+system("cls");
+// string t_name,t_seats,t_number,t_driverName,t_freeseats;
+// fstream file;
+cout<<"***Bus Reservation System***"<<endl;
+file.open("bus.txt");;
+if(!file){//if file doesn't exists
+  cout<<"No Record Exists"<<endl;
+  file.close();
+}
+else{
+  // file.open("bus.txt",ios::in);
+  file.close();
+  std::ifstream file("bus.txt");
+// file>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats;
+cout<<left<<setw(20)<<"Bus Number"<<setw(20)<<"Bus Name"<<
+setw(20)<<"Driver Name"<<setw(20)<<"Seats"<<
+setw(20)<<"FreeSeats"<<setw(20)<<"Departure"<<
+setw(20)<<"Destination"<<endl;
+while(!file.eof()){
+  file>>number>>name>>seats>>driverName>>freeseats>>dp>>ds;
+  if(!file.eof()){
+    cout<<left<<setw(20)<<number<<setw(20)<<name<<setw(20)<<driverName<<
+  setw(20)<<seats<<setw(20)<<freeseats<<setw(20)<<dp<<setw(20)<<ds<<endl;
+  }
+  else{}
+}
+file.close();
+}
+getch();
+Menu();
+}
+void EditBus(){
+  system("cls");
+    string numbertobeedited;
+    // string t_number,t_name,t_seats,t_drivername,t_freeseats;
+    int match=0;
+    // fstream file1,file2;
+cout<<"Enter the number of the bus to be edited"<<endl;
+cin>>numbertobeedited;
+file1.open("bus.txt",ios::in);
+file2.open("newbus.txt",ios::out|ios::trunc);
+if(!file1){
+    cout<<"No Bus Records found"<<endl;
+    file1.close();
+    file2.close();
+    remove("newbus.txt");
+    getch();
+    }
+else{
+    while(!file1.eof()){
+    file1>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats>>t_dp>>t_ds;
+    if(!file1.eof()){
+          if(numbertobeedited==t_number){
+        cout<<"Enter new name for the bus"<<endl;
+        cin>>t_name;
+        cout<<"Enter new driver's name for the bus"<<endl;
+        cin>>t_driverName;
+        cout<<"Enter new number of seats for the bus"<<endl;
+        cin>>t_seats;
+        t_freeseats=t_seats;
+        cout<<"Enter new departure place"<<endl;
+        cin>>t_dp;
+        cout<<"Enter new destination place"<<endl;
+        cin>>t_ds;
+        file2<<t_number<<" "<<t_name<<" "<<t_seats<<" "<<t_driverName<<
+        " "<<t_freeseats<<" "<<t_dp<<" "<<t_ds<<endl;
+        match=1;
+    }
+    else{
+        file2<<t_number<<" "<<t_name<<" "<<t_seats<<" "<<t_driverName<<
+        " "<<t_freeseats<<" "<<t_dp<<" "<<t_ds<<endl;
+    }
+    }
+    else{
+
+    }
+
+}
+file1.close();
+file2.close();
+    if(match==0){
+        cout<<"No record exists for this bus"<<endl;
+         remove("newbus.txt");
+    }
+    else{
+        remove("bus.txt");
+        rename("newbus.txt","bus.txt");
+    }
+}
+getch();
+Menu();
+  }
+void BusRoutes(string dep,string des){//for customer booking 
+	fstream file;
+	int count=0;
+	file.open("bus.txt",ios::in);
+	if(!file){//if file doesn't exists
+	  cout<<"Noo Record Exists"<<endl;
+	  file.close();
+	}
+	else{
+	  // file.open("bus.txt",ios::in);
+	// file>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats;
+  cout<<left<<setw(20)<<"Bus Name"<<setw(20)<<"Bus Number"<<setw(20)<<
+  "Driver Name"<<setw(20)<<"Seats"<<setw(20)<<"Freeseats"<<setw(20)<<
+  "Departure Place"<<setw(20)<<"Destination Place"<<endl;
+	while(!file.eof()){
+	  file>>number>>name>>seats>>driverName>>freeseats>>dp>>ds;
+    if(!file.eof()){
+      	  if(dp==dep&&ds==des){
+      cout<<left<<setw(20)<<name<<setw(20)<<number<<setw(20)<<driverName<<setw(20)<<
+      seats<<setw(20)<<freeseats<<setw(20)<<dp<<setw(20)<<ds<<endl;
+      cout<<"\n\nEnter the bus number of your choice from the above list"<<endl;
+      cin>>t_number;
+      count=1;
+      file.close();
+      ConfirmTicket(t_number);
+	  }
+	}
+  else{}
+    }
+	if(count==0){
+    system("cls");
+		cout<<"We are sorry to inform you, that there is no bus on this route"<<endl;
+    getch();
+    CustomerChoice();
+	}
+	file.close();
+	}
+	// ConfirmTicket();
+}
+void CustomerChoice()
+{
+  system("cls");
+	int ch;
+	cout<<"1.View Ticket\n2.Book Ticket\n3.Cancel Ticket"<<endl<<"4.Go Back"<<endl;
+	cin>>ch;
+	switch(ch)
+	{
+	case 1:ViewTicket();
+  break;
+  case 2:BookTicket();
+  break;
+  case 3:
+  break;
+  case 4:Start();
+  break;
+  default:cout<<"Invalid Choice"<<endl;
+	}
+}
+void CustomerInfo(){
+	newcus:
+	 system("cls");
+	 fstream file;
+	 string c_name,c_seat,bus_num;
+	 file.open("cus.txt");
+	 if(!file)
+	 {
+		 cout<<"Records do not exist"<<endl;
+     Menu();
+	 }
+	 else
+		{
+      // file.open("cus.txt",ios::in);
+		//  file>>c_name>>c_seat>>bus_num;
+    std::ifstream file("cus.txt");
+    cout<<left<<setw(20)<<"Customer Name"<<setw(20)<<"Seat No"<<setw(20)<<"Bus Number"<<
+    setw(20)<<"Customer Id"<<setw(20)<<"Customer Contact"<<endl;
+		 while(!file.eof()){
+          file>>c_name>>c_seat>>t_number>>c_id>>c_contact;
+  cout<<left<<setw(20)<<c_name<<setw(20)<<c_seat<<setw(20)<<t_number<<setw(20)<<
+  c_id<<setw(20)<<setw(20)<<c_contact<<endl;
+		 }
+     getch();
+		 file.close();
+		}
+    Menu();
+}
+void BookTicket(){
+	string depart,destin;
+	cout<<"**Bus Reservation System**"<<endl;
+	cout<<"Enter Place of Departure:"<<endl;
+	cin>>depart;
+	cout<<"Enter Destination:"<<endl;
+	cin>>destin;
+	BusRoutes(depart,destin);
+}
+void ViewTicket(){
+	string ch_ID;
+	int match=0;
+	fstream file;
+	file.open("cus.txt");
+	if(!file){//if file doesn't exists
+	  cout<<"No Record Exists"<<endl;
+	  file.close();
+	}
+	else{
+
+	std::ifstream file("cus.txt");
+	cout<<"Enter customer ID:"<<endl;
+		cin>>ch_ID;
+    		cout<<left<<setw(20)<<"Customer Name"<<setw(20)<<
+	  	 "Customer Seat"<<setw(20)<<
+		 "Bus Number"<<setw(20)<<
+		 "Customer ID"<<endl;
+	while(!file.eof()){
+
+		file>>c_name>>c_seat>>number>>c_id;
+		if(ch_ID==c_id)
+		{
+      cout<<left<<setw(20)<<c_name<<setw(20)<<c_seat<<setw(20)<<number<<setw(20)<<c_id<<endl;
+		match=1;
+		}
+	  }
+	file.close();
+	if(match==0){
+	  cout<<"No Record Found"<<endl;
+	}
+	}
+	// Sleep(5000);
+	getch();
+	CustomerChoice();
+}
+void ConfirmTicket(string num){
+  int match=0,m=0;
+  // fstream c_file;
+file.open("bus.txt",ios::in);
+if(!file){
+  cout<<"No Bus Record Exists. Sorry for the inconvinience. Please try again after some time"<<endl;
+  file.close();
+}
+else{
+  while(!file.eof()){
+    file>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats>>t_dp>>t_ds;
+    if(!file.eof()){
+      if(num==t_number){
+        if(t_freeseats==0){
+          cout<<"Sorry no seats available"<<endl;
+          BookTicket();
+        }
+        else{
+          t_freeseats--;
+           cout<<"Enter Name"<<endl;
+			  cin>>c_name;
+        cout<<"Enter contact"<<endl;
+        cin>>c_contact;
+			  cout<<"Bus number "<<t_number<<endl;
+        //generate a seat number and customer id
+			  // cout<<"Seat Number:"<<c_seat<<endl;
+			  cout<<"Customer ID:(Please note this!)"<<c_id<<endl;
+			  file1.open("cus.txt",ios::out|ios::app);
+			  file1<<endl<<c_name<<" "<<c_seat<<" "<<t_number<<
+			  " "<<c_id<<" "<<c_contact;
+			  file1.close();
+			  cout<<"Booked Successfully!"<<endl;
+        file.close();
+        match=1;
+        ModifyBusRecord(t_freeseats,t_number);
+        break;
+        }
+      }
+    }
+    else{}
+  }
+}
+}
+void ModifyBusRecord(int free,string num){
+  file1.open("bus.txt",ios::in);
+  file2.open("newbus.txt",ios::out|ios::app);
+  while(!file1.eof()){
+    file1>>number>>name>>seats>>driverName>>freeseats>>dp>>ds;
+    if(!file1.eof()){
+      if(num==number){
+        file2<<number<<" "<<name<<" "<<seats<<" "<<driverName<<" "<<free<<" "<<dp<<" "<<ds<<" "<<endl;
+      }
+      else{
+        file2<<number<<" "<<name<<" "<<seats<<" "<<driverName<<" "<<freeseats<<" "<<dp<<" "<<ds<<" "<<endl;
+      }
+    }
+    else{}
+  }
+  file1.close();
+  file2.close();
+  remove("bus.txt");
+  rename("newbus.txt","bus.txt");
+}
+string Cust_ID(){
+  int min=10000,max=99999;
+  static int temp;
+  static string tmp;
+  repeat:
+  int randNum=rand()%max+min;
+  temp=randNum;
+  if(temp==randNum)
+  goto repeat;
+  else{
+    tmp=to_string(randNum);
+    return tmp;
+  }
+}
+string RandomSeat(int n)
+{
+    char letter[] = { 'A', 'B', 'C', 'D'};
+    // srand(time(0));
+    string res;
+    res = res + letter[rand() % 4];
+    res=res+to_string((rand() % n/4)+1);
+    return res;
+}
+string RandomID(){
+    string res;
+    srand(time(0));
+    res=to_string((rand()%99999)+10000);
+    return res;
+}
+int checkcus(string str,string bus_num,string str1,int check)
+{
+		int m1=1;
+		// fstream file;
+		file2.open("cus.txt",ios::in);
+		if(!file2){//if file doesn't exists
+		  cout<<"No Record Exists"<<endl;
+		  file2.close();
+		}
+		else{
+		// std::ifstream file("cus.txt");
+		while(!file2.eof()){
+      if(!file2.eof()){
+        			file2>>tm_name>>t_seat>>number>>t_id>>t_contact;
+      switch(check){
+        case 1:if(str==c_seat&&bus_num==number){
+					        m1=0;
+				                                      }
+                  file2.close();
+        break;
+        case 2:if(str1==c_id){
+					        m1=0;
+				                     }
+                  file2.close();
+        break;
+      }
+      }
+      else{}
+
+		  }
+		// file.close();
+		}
+		return m1;
+}
+void DeleteBus()
+{
+  system("cls");
+  string numberme;
+  // int match =0;
+  int exist =0;
+  cout<<"Enter the bUs Number that you want it to get deleted"<<endl;
+  cin>>numberme;
+  // fstream file1,file2;
+  file1.open("bus.txt",ios::in);
+  file2.open("temp.txt",ios::out|ios::trunc);
+  if(!file1){
+    cout<<"No Bus Records found"<<endl;
+    file1.close();
+    file2.close();
+    remove("temp.txt");
+    getch();
+    }
+  else
+  {
+  while(!file1.eof()) 
+    {
+     file1>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats>>t_dp>>t_ds;
+     if(!file1.eof()){
+            if(t_number!=numberme)  
+       {
+       file2<<t_number<<" "<<t_name<<" "<<t_seats<<" "<<t_driverName<<
+        " "<<t_freeseats<<" "<<t_dp<<" "<<t_ds<<endl;
+      //  match=1;
+       }
+     else
+       {
+       exist=1;
+       }
+     }
+     else{}
+    }
+  }
+  file2.close();
+  file1.close();
+  if(exist==1)
+  {
+    cout<<"Bus deleted Successfully";
+    remove ("bus.txt");
+    rename ("temp.txt","bus.txt");
+  }
+  else{
+  cout<<"No such bus exists"<<endl;
+  remove ("temp.txt");
+  } 
+  getch();
+  Menu();
+}
+};
+int main(void){
+  srand(time(0));
+  int ch,ch2;
+  Bus b;
+  b.Start();
+  return 0;
+}
