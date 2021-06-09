@@ -116,7 +116,7 @@ void NewBus(){
   file.close();
   file.open("bus.txt",ios::out|ios::app);
   file<<number<<" "<<name<<" "<<seats<<" "<<driverName<<
-  " "<<freeseats<<" "<<dp<<" "<<ds<<endl;
+  " "<<freeseats<<" "<<dp<<" "<<ds;
   file.close();
   }
   else{
@@ -196,8 +196,9 @@ cout<<left<<setw(20)<<"Bus Name"<<setw(20)<<"Bus Number"<<setw(20)<<"Driver Name
 "No Of Seats"<<setw(20)<<"FreeSeats"<<setw(20)<<"Departure Place"<<
 setw(20)<<"Destination"<<endl;
 while(!file.eof()){
-  file>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats>>t_dp>>t_ds;
+  // file>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats>>t_dp>>t_ds;
   if(!file.eof()){
+    file>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats>>t_dp>>t_ds;
       if(number==t_number){
     cout<<left<<setw(20)<<t_name<<setw(20)<<t_number<<setw(20)<<t_driverName<<setw(20)<<
     t_seats<<setw(20)<<t_freeseats<<setw(20)<<t_dp<<setw(20)<<t_ds<<endl;
@@ -241,6 +242,7 @@ setw(20)<<"Destination"<<endl;
 while(!file.eof()){
   file>>number>>name>>seats>>driverName>>freeseats>>dp>>ds;
   if(!file.eof()){
+    // file>>number>>name>>seats>>driverName>>freeseats>>dp>>ds;
     cout<<left<<setw(20)<<number<<setw(20)<<name<<setw(20)<<driverName<<
   setw(20)<<seats<<setw(20)<<freeseats<<setw(20)<<dp<<setw(20)<<ds<<endl;
   }
@@ -270,9 +272,9 @@ if(!file1){
     }
 else{
     while(!file1.eof()){
-    file1>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats>>t_dp>>t_ds;
     if(!file1.eof()){
-          if(numbertobeedited==t_number){
+      file1>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats>>t_dp>>t_ds;
+        if(numbertobeedited==t_number){
         cout<<"Enter new name for the bus"<<endl;
         cin>>t_name;
         cout<<"Enter new driver's name for the bus"<<endl;
@@ -284,19 +286,18 @@ else{
         cin>>t_dp;
         cout<<"Enter new destination place"<<endl;
         cin>>t_ds;
-        file2<<t_number<<" "<<t_name<<" "<<t_seats<<" "<<t_driverName<<
-        " "<<t_freeseats<<" "<<t_dp<<" "<<t_ds<<endl;
+        file2<<endl<<t_number<<" "<<t_name<<" "<<t_seats<<" "<<t_driverName<<
+        " "<<t_freeseats<<" "<<t_dp<<" "<<t_ds;
         match=1;
     }
     else{
-        file2<<t_number<<" "<<t_name<<" "<<t_seats<<" "<<t_driverName<<
-        " "<<t_freeseats<<" "<<t_dp<<" "<<t_ds<<endl;
-    }
-    }
-    else{
+                file2<<endl<<t_number<<" "<<t_name<<" "<<t_seats<<" "<<t_driverName<<
+        " "<<t_freeseats<<" "<<t_dp<<" "<<t_ds;
+      }
+      // else{}
 
     }
-
+    }
 }
 file1.close();
 file2.close();
@@ -308,7 +309,7 @@ file2.close();
         remove("bus.txt");
         rename("newbus.txt","bus.txt");
     }
-}
+
 getch();
 Menu();
   }
@@ -317,7 +318,7 @@ void BusRoutes(string dep,string des){//for customer booking
 	int count=0;
 	file.open("bus.txt",ios::in);
 	if(!file){//if file doesn't exists
-	  cout<<"Noo Record Exists"<<endl;
+	  cout<<"No Record Exists"<<endl;
 	  file.close();
 	}
 	else{
@@ -332,14 +333,28 @@ void BusRoutes(string dep,string des){//for customer booking
       	  if(dp==dep&&ds==des){
       cout<<left<<setw(20)<<name<<setw(20)<<number<<setw(20)<<driverName<<setw(20)<<
       seats<<setw(20)<<freeseats<<setw(20)<<dp<<setw(20)<<ds<<endl;
+          }
+            else{}
+    }
+  }
       cout<<"\n\nEnter the bus number of your choice from the above list"<<endl;
       cin>>t_number;
-      count=1;
+      //check whether the entered bus number is available in record
       file.close();
-      ConfirmTicket(t_number);
-	  }
-	}
-  else{}
+      file.open("bus.txt",ios::in);
+      while(!file.eof()){
+        file>>number>>name>>seats>>driverName>>freeseats>>dp>>ds;
+        if(!file.eof()){
+          if(number==t_number&&dp==dep&&ds==des){
+             count=1;
+             file.close();
+             ConfirmTicket(t_number);
+          }
+        }
+        else{
+          file.close();
+        }
+      }
     }
 	if(count==0){
     system("cls");
@@ -350,7 +365,6 @@ void BusRoutes(string dep,string des){//for customer booking
 	file.close();
 	}
 	// ConfirmTicket();
-}
 void CustomerChoice()
 {
   system("cls");
@@ -379,6 +393,7 @@ void CustomerInfo(){
 	 if(!file)
 	 {
 		 cout<<"Records do not exist"<<endl;
+     getch();
      Menu();
 	 }
 	 else
@@ -410,15 +425,15 @@ void BookTicket(){
 void ViewTicket(){
 	string ch_ID;
 	int match=0;
-	fstream file;
-	file.open("cus.txt");
+	// fstream file;
+	file.open("cus.txt",ios::in);
 	if(!file){//if file doesn't exists
 	  cout<<"No Record Exists"<<endl;
 	  file.close();
 	}
 	else{
 
-	std::ifstream file("cus.txt");
+	// std::ifstream file("cus.txt");
 	cout<<"Enter customer ID:"<<endl;
 		cin>>ch_ID;
     		cout<<left<<setw(20)<<"Customer Name"<<setw(20)<<
@@ -426,13 +441,16 @@ void ViewTicket(){
 		 "Bus Number"<<setw(20)<<
 		 "Customer ID"<<endl;
 	while(!file.eof()){
-
-		file>>c_name>>c_seat>>number>>c_id;
-		if(ch_ID==c_id)
+    if(!file.eof()){
+      file>>c_name>>c_seat>>number>>c_id>>c_contact;
+      		if(ch_ID==c_id)
 		{
-      cout<<left<<setw(20)<<c_name<<setw(20)<<c_seat<<setw(20)<<number<<setw(20)<<c_id<<endl;
+      cout<<left<<setw(20)<<c_name<<setw(20)<<c_seat<<setw(20)<<number<<setw(20)<<c_id<<setw(20)<<c_contact<<endl;
 		match=1;
 		}
+    }
+    else{}
+
 	  }
 	file.close();
 	if(match==0){
@@ -469,6 +487,9 @@ else{
 			  cout<<"Bus number "<<t_number<<endl;
         //generate a seat number and customer id
 			  // cout<<"Seat Number:"<<c_seat<<endl;
+        c_id=ID();
+        c_seat=SeatNo(t_number);
+        cout<<"Seat allocated: "<<c_seat<<endl;
 			  cout<<"Customer ID:(Please note this!)"<<c_id<<endl;
 			  file1.open("cus.txt",ios::out|ios::app);
 			  file1<<endl<<c_name<<" "<<c_seat<<" "<<t_number<<
@@ -478,13 +499,18 @@ else{
         file.close();
         match=1;
         ModifyBusRecord(t_freeseats,t_number);
-        break;
+        getch();
+        file1.close();
+        CustomerChoice();
         }
       }
     }
     else{}
   }
 }
+file.close();
+file1.close();
+file2.close();
 }
 void ModifyBusRecord(int free,string num){
   file1.open("bus.txt",ios::in);
@@ -506,34 +532,58 @@ void ModifyBusRecord(int free,string num){
   remove("bus.txt");
   rename("newbus.txt","bus.txt");
 }
-string Cust_ID(){
-  int min=10000,max=99999;
-  static int temp;
-  static string tmp;
-  repeat:
-  int randNum=rand()%max+min;
-  temp=randNum;
-  if(temp==randNum)
-  goto repeat;
-  else{
-    tmp=to_string(randNum);
-    return tmp;
+string ID(){
+  file.close();
+  file.close();
+  int cnt=1;
+  string count;
+  file.open("cus.txt",ios::in);
+  while(!file.eof()){
+    file>>tm_name>>t_seat>>number>>t_id>>t_contact;
+    if(!file.eof()){
+      cnt++;
+    }
+    else{cnt++;
+    }
   }
+  count=to_string(cnt);
+  file.close();
+  return count;
 }
-string RandomSeat(int n)
-{
-    char letter[] = { 'A', 'B', 'C', 'D'};
-    // srand(time(0));
-    string res;
-    res = res + letter[rand() % 4];
-    res=res+to_string((rand() % n/4)+1);
-    return res;
-}
-string RandomID(){
-    string res;
-    srand(time(0));
-    res=to_string((rand()%99999)+10000);
-    return res;
+string SeatNo(string no){
+    file.close();
+  file.close();
+  int cnt=1,quo,rem;
+  string letter="";
+  string count;
+  file.open("cus.txt",ios::in);
+  while(!file.eof()){
+    // file>>tm_name>>t_seat>>number>>t_id>>t_contact;
+    if(!file.eof()){
+      file>>tm_name>>t_seat>>number>>t_id>>t_contact;
+      if(no==number){
+        cnt++;
+      }
+    }
+    else{
+    }
+  }
+  quo=(cnt/4)+1;
+  rem=cnt%4;
+  switch(rem){
+    case 0:quo-=1;
+    letter="D";
+    break;
+    case 1:letter="A";
+    break;
+    case 2:letter="B";
+    break;
+    case 3:letter="C";
+    break;
+  }
+  count=to_string(quo)+letter;
+  file.close();
+  return count;
 }
 int checkcus(string str,string bus_num,string str1,int check)
 {
@@ -591,17 +641,27 @@ void DeleteBus()
   {
   while(!file1.eof()) 
     {
-     file1>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats>>t_dp>>t_ds;
+    //  file1>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats>>t_dp>>t_ds;
      if(!file1.eof()){
+       file1>>t_number>>t_name>>t_seats>>t_driverName>>t_freeseats>>t_dp>>t_ds;
             if(t_number!=numberme)  
        {
-       file2<<t_number<<" "<<t_name<<" "<<t_seats<<" "<<t_driverName<<
-        " "<<t_freeseats<<" "<<t_dp<<" "<<t_ds<<endl;
+       file2<<endl<<t_number<<" "<<t_name<<" "<<t_seats<<" "<<t_driverName<<
+        " "<<t_freeseats<<" "<<t_dp<<" "<<t_ds;
       //  match=1;
        }
      else
        {
-       exist=1;
+         if(t_freeseats!=t_seats){
+           cout<<"Bus cannot be deleted"<<endl;
+           file1.close();
+           file2.close();
+           remove("temp.txt");
+           getch();
+           Menu();
+         }
+         else
+          exist=1;
        }
      }
      else{}
