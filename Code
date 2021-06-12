@@ -7,10 +7,11 @@
 using namespace std;
 class Bus{
 private:
-  int seats,freeseats,ch;
+  int seats,freeseats,ch,check=0;
   int t_seats,t_freeseats;
   string number,name,driverName,dp,ds;
   string d_number;
+  string userName,Pass;
   string t_number,t_name,t_driverName,t_dp,t_ds;
   string c_name,c_seat,c_id,c_contact;
   string tm_name,t_seat,t_id,t_contact;
@@ -19,19 +20,22 @@ public:
 void Start(){
   system("cls");
   string email,pass;
-cout<<"1.Administrator Login\n2.Customer"<<endl;
+cout<<"1.Administrator Login\n2.Customer\n3.Exit"<<endl;
 cin>>ch;
 switch(ch){
   case 1:
   relogin:
   system("cls");
-  cout<<"***Enter email***"<<endl;
-  while((getchar())!='\n');//flushing I/P stream
-getline(cin,email);
+  cout<<"***Enter Username***"<<endl;
+  // while((getchar())!='\n');//flushing I/P stream
+// getline(cin,email);
+cin>>email;
 cout<<"***Enter Password***"<<endl;
 // while((getchar())!='\n');//flushing I/P stream
-getline(cin,pass);
-if(email=="r"&&pass=="r"){
+// getline(cin,pass);
+cin>>pass;
+check=CheckLog(email,pass);
+if(check==1){
   cout<<"****Access granted";
   for(int i=0;i<10;i++){
     Sleep(15);//produce delay of 1000ms
@@ -45,10 +49,24 @@ goto relogin;
   break;
   case 2:CustomerChoice();
   break;
-  case 3:
+  case 3:exit(0);
   break;
   default:cout<<"Invalid choice..."<<endl;
 }
+}
+int CheckLog(string email,string pass){
+  file3.open("login.txt",ios::in);
+  while(!file3.eof()){
+    if(!file3.eof()){
+      file3>>userName>>Pass;
+      if(email==userName&&pass==Pass){
+        file3.close();
+        return 1;
+    }
+  }
+}
+file3.close();
+return 0;
 }
 void Menu(){
   int ch;
